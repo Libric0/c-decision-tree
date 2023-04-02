@@ -122,7 +122,7 @@ class _DecisionTreeNode:
     
     @property
     def has_children(self):
-        return self.children != None
+        return self.children is not None
     
     @property
     def split_feature_index(self):
@@ -171,7 +171,7 @@ class _DecisionTreeNode:
 
     def getEntropy(self):
         '''Calculates the Entropy of this node. Either the weighted sum of its childrens' entropy or the dataSetEntropy'''
-        if self.children == None:
+        if self.children is None:
             return self.getDatasetEntropy()
         else:
             return self.getSplitEntropy(self.children)
@@ -184,7 +184,7 @@ class _DecisionTreeNode:
         # Sorting each instance into one of the children
         for x, y in zip(self.X, self.y):
             feature_values.add(x[feature_index])
-            if children_X.get(x[feature_index]) == None:
+            if children_X.get(x[feature_index]) is None:
                 children_X[x[feature_index]] = []
                 children_Y[x[feature_index]] = []
             
@@ -236,7 +236,7 @@ class _DecisionTreeNode:
             best_split = candidate
             best_gain = candidate_gain
 
-        if best_feature != None:
+        if best_feature is not None:
             self.applySplit(best_feature, best_split)
             for child in self.children.values():
                 child.id3(min_gain, min_instances, max_depth = max_depth, depth=depth+1)
@@ -249,12 +249,12 @@ class _DecisionTreeNode:
         ret = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 120" width="80" height="120" {x_translate} {y_translate}>'
         label_percentages = {label:0 for label in root_labels}
         label_percentages.update(self.label_percentages)
-        if self.value != None:
+        if self.value is not None:
             ret += f'<text x="{40}" y="{10}" font-family="Arial, Helvetica, sans-serif" dominant-baseline="central" text-anchor="middle">{self.value}</text>'
 
         ret += _pie_chart(40, 50, 30, label_percentages)
         ret += f'<text x="{40}" y="{50}" font-family="Arial, Helvetica, sans-serif" dominant-baseline="central" text-anchor="middle">{_shorten_number(self.data_set_size)}</text>'
-        if self.split_feature != None:
+        if self.split_feature is not None:
             ret += f'<text x="{40}" y="{90}" font-family="Arial, Helvetica, sans-serif" dominant-baseline="central" text-anchor="middle">{self.split_feature}</text>'
         ret += "</svg>"
         return ret
@@ -262,7 +262,7 @@ class _DecisionTreeNode:
     def subtree_svg(self, root_labels):
         '''Returns an SVG string of the decision tree node (and its children recursively) along with it's width & height. Used to compute the SVG for the whole decision tree.'''
         # Base case: We return a single node withou
-        if self.children == None:
+        if self.children is None:
             return self.node_svg(0,0,root_labels), 80, 120
         
         children = [child.subtree_svg(root_labels) for child in self.children.values()]
@@ -323,9 +323,9 @@ class DecisionTree:
         '''Fits the decision tree to the data
         - `Data` is a dataframe of instances, including the target value
         - `target` is the name of the target value column. Can also be used to keep track of the target value for lists
-        - `X` is a list of instances.
-        - `y` is a list of target values.
-        - `feature_names` is a list of feature names
+        - `X` is a list or array-like of instances.
+        - `y` is a list or array-like of target values.
+        - `feature_names` is a list or array-like of feature names
         - `extend` determines whether `X`, `y` or `data` extend or overwrite the Dataset. If true, the dataset is extended (with duplicates).
         
         Usage:
@@ -336,9 +336,9 @@ class DecisionTree:
         extend = extend and self.root!=None
 
         # Making sure we either pass data or X,y
-        if (data is None) and (X==None or y==None):
+        if (data is None) and (X is None or y is None):
             raise Exception("No training data has been given.")
-        if data is not None and (X!=None or y!=None):
+        if data is not None and (X is not None or y is not None):
             raise Exception("Values have been passed to both `data` and either `X` or `y`. Please only use either of them.")
         
         # Handling dataframes
@@ -355,7 +355,7 @@ class DecisionTree:
                 self.target = target
                 self.feature_names = descriptive_features
             else:
-                if self.feature_names != None:
+                if self.feature_names is not None:
                     if self.feature_names != list(descriptive_features):
                         raise Exception("The names of the existing features and the data-columns don't match.")
                 else:
@@ -366,31 +366,39 @@ class DecisionTree:
                 self.target = target
 
         # Handling lists of instances
-        if X != None:
+        if X is not None:
+            if not isinstance(X, list):
+                ## We assume we have a numpy array
+                X = X.tolist()
+
+            if not isinstance(y, list):
+                ## We assume we have a numpy array
+                y = y.tolist()
+            
             if not extend:
                 self.X = list(X)
                 self.y = list(y)
-                if feature_names != None:
+                if feature_names is not None:
                     self.feature_names = list(feature_names)
                 self.target = target
             else:
                 self.X += list(X)
                 self.y += list(y)
-                if self.feature_names != None and feature_names != None and self.feature_names != list(feature_names):
+                if self.feature_names is not None and feature_names is not None and self.feature_names != list(feature_names):
                     raise Exception("The existing and given feature names do not match. Please make sure you they are the same.")
                 if self.feature_names is None and feature_names is not None:
                     self.feature_names = list(feature_names)
 
-                if self.target != None and target != None and self.target != target:
+                if self.target is not None and target is not None and self.target != target:
                     raise Exception("The existing and given target names do not match. Please make sure they are the same.")
-                if self.target == None:
+                if self.target is None:
                     self.target = target
 
         if self.X == []:
             raise Exception("The dataset contains no training examples")
         
-        if self.feature_names != None:
-            feature_names = self.feature_names
+        if self.feature_names is not None:
+            feature_names = list(self.feature_names)
         else:
             feature_names = list(range(len(self.X[0])))
 
@@ -419,7 +427,7 @@ class DecisionTree:
             split_index = currentNode.split_feature_index
 
             # We cannot go deeper, if this never occured in a training example. Hence we break and return majority
-            if currentNode.children.get(x[split_index]) == None:
+            if currentNode.children.get(x[split_index]) is None:
                 break
             currentNode = currentNode.children[x[split_index]]
         return currentNode.getNodeMajorityLabel()
