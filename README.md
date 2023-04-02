@@ -46,7 +46,7 @@ from c_DecisionTree import DecisionTree
 dt = DecisionTree()
 ```
 
-Next, fit the decision tree by calling the `fit` function with the DataFrame and the target column `"Diet"` as arguments. Make sure that unique identifiers are excluded from the columns.
+Next, fit the decision tree by calling the `fit` function with the DataFrame and the target column `"Diet"` as arguments. Make sure that unique identifiers are excluded from the columns. In this case, I am excluding the `Name` column from the DataFrame using the `loc` property.
 
 ```python
 dt.fit(data=df.loc[:, df.columns != "Name"], target="Diet")
