@@ -46,7 +46,7 @@ from c_DecisionTree import DecisionTree
 dt = DecisionTree()
 ```
 
-Next, fit the decision tree by calling the `fit` function with the DataFrame and the target column `"Diet"` as arguments. Make sure that unique identifiers are excluded from the column.
+Next, fit the decision tree by calling the `fit` function with the DataFrame and the target column `"Diet"` as arguments. Make sure that unique identifiers are excluded from the columns.
 
 ```python
 dt.fit(data=df.loc[:, df.columns != "Name"], target="Diet")
@@ -55,11 +55,13 @@ This will create the following decision tree:
 
 ![First Example Tree](assets/diet_example.svg)
 
-Alternatively, you could pass a list of instances to `X` and a list of labels to `y`, just as seen as in scikit learn. The instances in `X` would then just be a list of feature values. In this case, you have to make sure that the order of your features don't change. 
+Alternatively, you could pass a list of instances to `X` and a list of labels to `y`, just as seen as in scikit learn. The instances in `X` would then just be a list of feature values. In this case, you have to make sure that the order of your features doesn't change. 
 
 ## Visualization
 
-All examples show a SVG of the decision tree. Each node displays the **number of instances** in the middle. Around this one can see the **relative frequencies** of each label in the node. The outer border is displayed in the color of the **majority vote**. 
+All examples show a SVG of the decision tree. Let us look at what each part of the visualization stands for.
+
+Each node displays the **number of instances** in the middle. Around it one can see the **relative frequencies** of each label in the node. The outermost border is displayed in the color of the **majority vote** of labels at node. 
 
 To display the tree `dt` in a jupyter notebook, simply write this as the last line of a cell:
 
@@ -71,14 +73,14 @@ Jupyter always displays whatever the last line of a cell returns, or in this cas
 
 ![Decision Tree using the default Palette](assets/diet_example_default_palette.svg)
 
-This tree looks a bit different than the examples so far. The color for Vegan and Vegetarian are swapped. As a vegan diet is often seen as more environmentally friendly, it can make sense to swap them back. This can easily be done by **changing the palette**. To this end, simply call the `set_palette` function:
+This tree looks a bit different than the examples so far. The colors for Vegan and Vegetarian are swapped. As a vegan diet is often seen as more environmentally friendly, it can make sense to swap them back. This can easily be done by **changing the palette**. To this end, simply call the `set_palette` function:
 
 ```python
 from c_DecisionTree import set_palette
 set_palette(['hsl(25, 67%, 61%)', 'hsl(83, 67%, 61%)', 'hsl(234, 67%, 61%)'])
 ```
 
-If you now redraw the tree, it should have the colors swapped again.
+If you now redraw the tree, it should have the colors swapped in the same way as seen in the other examples.
 
 The palette can be changed in 3 ways
 - Set back to Default: `set_palette(None)`
@@ -92,7 +94,7 @@ Now, we want to classify a dish that is not in our dataset.
 |---:|:-------------------------|:--------|:-------|:-------|:-------------|:---------|:----------|
 |  | Shrimp and Avocado Salad | No      | Yes    | No     | Yes          | No       | No        |
 
-This can simply be done by passing the dataframe containing this instance to the `predict` function of the tree. Assuming that our new instance are in the dataset `instances`, this would look like that:
+This can simply be done by passing the dataframe containing this instance to the `predict` function of the tree. Assuming that our new instance is in the dataset `instances`, it would look like this:
 
 ```python
 dt.predict(data=instances)
