@@ -6,7 +6,7 @@ A simple categorial decision tree library for python users, mainly focused at ed
 ## Features
 - Creates an entropy-based decision tree
 - Pre-pruning using `min_instances`, `max_depth`, `min_gain`
-- Supports lists of instances as well as `pandas.DataFrame`
+- Supports lists/`np.array`s of instances as well as `pandas.DataFrame`
 - Built-in Visualization
   - IPython Notebook Support
   - Seaborn color palettes support
