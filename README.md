@@ -61,7 +61,7 @@ Alternatively, you could pass a list of instances to `X` and a list of labels to
 
 All examples show a SVG of the decision tree. Let us look at what each part of the visualization stands for.
 
-Each node displays the **number of instances** in the middle. Around it one can see the **relative frequencies** of each label in the node. The outermost border is displayed in the color of the **majority vote** of labels at node. 
+Each node displays the **number of instances** in the middle. Around it one can see the **relative frequencies** of each label in the node. The outermost border is displayed in the color of the **majority vote** of labels at the node. 
 
 To display the tree `dt` in a jupyter notebook, simply write this as the last line of a cell:
 
