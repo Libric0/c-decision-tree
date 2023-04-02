@@ -1,4 +1,4 @@
-# c-decision-tree
+# c-decision-tree: A Pretty Categoral Decision Tree Library
 A simple categorial decision tree library for python users, mainly focused at educators and students. The syntax is very similar to scikit learn and it has built-in visualization.
 
 ![Decision Tree Visualized](/assets/Diet.svg)
