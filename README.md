@@ -112,7 +112,7 @@ dt.predict(data=instances)
 
 This then returns the list `['Meat-Based']`. It classified our dish correctly!
 
-Again, you could alternatively just pass a list of instances to `X`, as one would do in scikit learn, but you would have to make sure that the sorting is the same as the list that was used to create the tree. You can check the order using `dt.feature_names`.
+Again, you could alternatively just pass a list of instances to `X`, as one would do in scikit learn, but you would have to make sure that the order of the features is the same as the list that was used to create the tree. You can check the order using `dt.feature_names`.
 ## Pre-Pruning
 This decision tree is technically very correct, but the split on eggs only has one instance in the "Yes" option. By changing the parameters of the decision tree, one can make use of pre-pruning. Depending on the task, this can improve generalization performance. There are currently 3 parameters:
 - `min_instances`: A split can only be made if all children contain at least this many instances.
