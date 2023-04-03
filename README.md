@@ -4,7 +4,7 @@ An intuitive, categorial decision tree library for python users, made primarily 
 ![Decision Tree Visualized](/assets/Diet.svg)
 
 ## Features
-- Creates an entropy-based decision tree
+- Creates and trains an entropy-based decision tree in just 2 lines of code
 - Pre-pruning using `min_instances`, `max_depth`, `min_gain`
 - Supports lists/`np.array`s of instances as well as `pandas.DataFrame`
 - Built-in Visualization
