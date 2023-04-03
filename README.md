@@ -1,5 +1,5 @@
 # c-decision-tree: A Pretty, Categorial Decision Tree Library
-An intuitive categorial decision tree library for python users, mainly focused at educators and students. The syntax is very similar to scikit learn and it has built-in visualization.
+An intuitive, categorial decision tree library for python users, made primarily for educators and students. The syntax is very similar to scikit-learn and it has built-in visualization.
 
 ![Decision Tree Visualized](/assets/Diet.svg)
 
@@ -73,6 +73,8 @@ Jupyter always displays whatever the last line of a cell returns, or in this cas
 
 ![Decision Tree using the default Palette](assets/diet_example_default_palette.svg)
 
+### Changing the Palette
+
 This tree looks a bit different than the examples so far. The colors for Vegan and Vegetarian are swapped. As a vegan diet is often seen as more environmentally friendly, it can make sense to swap them back. This can easily be done by **changing the palette**. To this end, simply call the `set_palette` function:
 
 ```python
@@ -88,6 +90,14 @@ The palette can be changed in 3 ways
   - The `list` should contain colors as strings that are understandable to an SVG parser. For example `"#55443F"`, `"rgb(255,20,70)"`, or `"hsl(25, 67%, 61%)"`
 - Use a seaborn palette: `set_palette(name)`
   - For example `set_palette("muted")`
+
+### Saving the Image
+The command to save the image to the file system is very similar to matplotlib, but is called on your specific decision tree instance `dt`.
+```python
+dt.savefig("filename.svg")
+```
+
+This command saves the current decision tree to your working directory. Raster graphics, such as PNG and JPEG, are currently not supported. 
 ## Inference
 Now, we want to classify a dish that is not in our dataset. 
 |    | Name                     | Dairy   | Meat   | Eggs   | Vegetables   | Fruits   | Legumes   |
