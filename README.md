@@ -43,7 +43,7 @@ In this example, we are going to generate a decisiontree that classifies all dis
 | 12 | Tofu Stir Fry            | No      | No     | No     | Yes          | No       | Yes       | Vegan      |
 </details>
 
-## Example: Categorial Decision Tree Classifier
+## Using the Categorical Decision Tree Classifier
 First, we import and initialize the decision tree
 
 ```python
