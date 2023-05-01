@@ -1,4 +1,4 @@
-# c-decision-tree: A Pretty, Categorial Decision Tree Library
+# Lumber: A Pretty, Categorial Decision Tree Library
 An intuitive, categorial decision tree library for python users, made primarily for educators and students. The syntax is very similar to scikit-learn and it has built-in visualization.
 
 ![Decision Tree Visualized](/assets/Diet.svg)
@@ -38,12 +38,12 @@ In this example, we are going to generate a decisiontree that classifies all dis
 | 12 | Tofu Stir Fry            | No      | No     | No     | Yes          | No       | Yes       | Vegan      |
 </details>
 
-## Setup
+## Example: Categorial Decision Tree Classifier
 First, we import and initialize the decision tree
 
 ```python
-from c_DecisionTree import DecisionTree
-dt = DecisionTree()
+import lumber as lb
+dt = lb.CategoricalDecisionTreeClassifier()
 ```
 
 Next, fit the decision tree by calling the `fit` function with the DataFrame and the target column `"Diet"` as arguments. Make sure that unique identifiers are excluded from the columns. In this case, I am excluding the `Name` column from the DataFrame using the `loc` property.
@@ -78,8 +78,7 @@ Jupyter always displays whatever the last line of a cell returns, or in this cas
 This tree looks a bit different than the examples so far. The colors for Vegan and Vegetarian are swapped. As a vegan diet is often seen as more environmentally friendly, it can make sense to swap them back. This can easily be done by **changing the palette**. To this end, simply call the `set_palette` function:
 
 ```python
-from c_DecisionTree import set_palette
-set_palette(['hsl(25, 67%, 61%)', 'hsl(83, 67%, 61%)', 'hsl(234, 67%, 61%)'])
+lb.set_palette(['hsl(25, 67%, 61%)', 'hsl(83, 67%, 61%)', 'hsl(234, 67%, 61%)'])
 ```
 
 If you now redraw the tree, it should have the colors swapped in the same way as seen in the other examples.

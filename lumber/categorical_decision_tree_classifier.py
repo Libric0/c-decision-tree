@@ -1,93 +1,16 @@
-# Copyright (C) 2023 Fredrik Konrad <fredrik.konrad@posteo.net>
+# Copyright (C) 2023 Fredrik Konrad <lumber@librico.mozmail.com>
 
-# This file is part of the c-decision-tree library.
-# The c-decision-tree library is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# This file is part of the lumber library.
+# The lumber library is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-# The c-decision-tree library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# The lumber library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License along with FocusLocus. If not, see <https://www.gnu.org/licenses/>.
 
-from math import log2, sin, cos, pi
+from math import log2
+from .style import _color_palette, _shorten_number
+from .figures import _pie_chart_svg, _legend_svg
 
-_palette = None
-
-def set_palette(palette):
-    global _palette
-    _palette = palette
-
-def _standard_palette(n_colors):
-    return [f"hsl({((((i)*209)%360) + 25) % 360}, 67%, 61%)" for i in range(n_colors)]
-
-def _color_palette(n_colors):
-    # Standard palette given by the library, 360 different hues but gets crammed / hard to distinguish after 10
-    if _palette is None:
-        return _standard_palette(n_colors)
-    
-    # Use user-defined palettes
-    if isinstance(_palette, list):
-        return (_palette*(round(n_colors/len(_palette)+1)))[:n_colors]
-    
-    # Use seaborn-palette for string
-    if isinstance(_palette, str):
-        try:
-            import seaborn as sns
-        except ImportError:
-            raise Exception("Named palettes can only be used if seaborn is installed in your python environment. Run `pip install seaborn` to install it.")
-        # Converting to SVG rgb format
-        return [f'rgb({color[0]*255},{color[1]*255},{color[2]*255})' for color in sns.color_palette(palette = _palette, n_colors = n_colors)]
-    import warnings
-    warnings.warn("The user-defined palette is not valid. Resorting to default.")
-    return _standard_palette(n_colors)
-    
-
-def _shorten_number(num):
-        if num < 1000:
-            return num
-        if num < 1_000_000:
-            return f"{round(num/1_000)}K"
-        if num < 1_000_000_000:
-            return f"{round(num/1_000_000)}M"
-        if num < 1_000_000_000_000:
-            return f"{round(num/1_000_000_000)}B"
-        if num < 1_000_000_000_000_000:
-            return f"{round(num/1_000_000_000_000)}T"
-        return f"{round(num/1_000_000_000_000_000)}Q"
-
-def _pie_chart(cx, cy, r, percentages:dict):
-    '''Returns SVG code to draw a pie chart using a rainbow pallette'''
-    ret = ''
-    # Sorting the items to get a deterministic view of the dict
-    percentages_sorted = sorted(percentages.items())
-    # Retrieving the maximum to mark the chart with the majority vote
-    max_item = max(enumerate(percentages_sorted), key=lambda item: item[1][1])
-
-    # Drawing the outer circle indicating the majority vote
-    ret += f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{_color_palette(len(percentages))[max_item[0]]}"/>'
-    # Drawing the seperating white circle
-    ret += f'<circle cx="{cx}" cy="{cy}" r="{r*0.9}" fill="hsl({0},0%,100%)"/>'
-
-    # If we have no entropy, we just draw a complete circle
-    if max_item[1][1] == 1:
-        ret += f'<circle cx="{cx}" cy="{cy}" r="{r*0.85}" fill="{_color_palette(len(percentages))[max_item[0]]}"/>'
-        # Draw white circle in the middle to allow for text
-        ret += f'<circle cx="{cx}" cy="{cy}" r="{r*0.6}" fill="hsl({0},0%,100%)"/>'
-        return ret
-    
-    # Draw Actual pie chard based on percentages
-    total = -.25
-    for i, percentage in enumerate(percentages_sorted):
-        # Very long string. Long explanation. We draw a path from the center, over an arc, back to the center.
-        # M moves the cursor to the center
-        # L draws a line to the start of the label's segment
-        # A draws an art from the start to the end of the segment
-        # - The "if" is needed, because in the case of >0.5 percentage, we have to choose the longer arc
-        # z moves the cursor back to the center and closes the arc
-        ret += f'<path d="M{cx},{cy} L{round(cos(total*2*pi)*r*0.85+cx,10)},{round(sin(total*2*pi)*r*0.85+cy,10)} A{r*0.85},{r*0.85} 0 {0 if percentage[1] <= 0.5 else 1},1 {round(cos((total+percentage[1])*2*pi)*r*0.85+cx,10)},{round(sin((total+percentage[1])*2*pi)*r*0.85+cy,10)} z" fill="{_color_palette(len(percentages))[i]}" stroke="{_color_palette(len(percentages))[i]}" stroke-width="0.1"/>'
-        total += percentage[1]
-    
-    # Draw white circle in the middle to allow for text
-    ret += f'<circle cx="{cx}" cy="{cy}" r="{r*0.6}" fill="hsl({0},0%,100%)"/>'
-    return ret
 
 class _DecisionTreeNode:
 
@@ -252,7 +175,7 @@ class _DecisionTreeNode:
         if self.value is not None:
             ret += f'<text x="{40}" y="{10}" font-family="Arial, Helvetica, sans-serif" dominant-baseline="central" text-anchor="middle">{self.value}</text>'
 
-        ret += _pie_chart(40, 50, 30, label_percentages)
+        ret += _pie_chart_svg(40, 50, 30, label_percentages)
         ret += f'<text x="{40}" y="{50}" font-family="Arial, Helvetica, sans-serif" dominant-baseline="central" text-anchor="middle">{_shorten_number(self.data_set_size)}</text>'
         if self.split_feature is not None:
             ret += f'<text x="{40}" y="{90}" font-family="Arial, Helvetica, sans-serif" dominant-baseline="central" text-anchor="middle">{self.split_feature}</text>'
@@ -284,7 +207,7 @@ class _DecisionTreeNode:
     def _repr_svg_(self):
         return self.node_svg(0,0,self.labels)
 
-class DecisionTree:
+class CategoricalDecisionTreeClassifier:
     
     def __init__(self, min_gain = 0, min_instances = 0, max_depth = None):
         '''
@@ -432,30 +355,10 @@ class DecisionTree:
             currentNode = currentNode.children[x[split_index]]
         return currentNode.getNodeMajorityLabel()
     
-    def _legend_svg(self):
-        '''Returns an SVG string of the legend, along with it's width and height'''
-        labels = sorted(self.root.labels)
-        y_offset = 0
-        height = 20*len(labels) 
-        if self.target is not None:
-            y_offset = 25
-            height += 30
-        width = 150 
-        svgstr = f"""<svg width="{width+2}" height="{height+2}" xmlns="http://www.w3.org/2000/svg">
-        <rect rx="5" ry="5" width="{width}" height="{height}" x="1" y="1" stroke="#AAAAAA" stroke-width="2" fill="white"/>"""
-        if self.target is not None:
-            svgstr +=f'<text x="75" y="{15}" font-family="Arial, Helvetica, sans-serif" font-weight="bold" dominant-baseline="central" text-anchor="middle">{self.target}</text>'
-        for i, (color, label) in enumerate(zip(_color_palette(len(labels)), labels)):
-            svgstr += f'<line stroke="{color}" stroke-width="2.5" x1="10" x2="30" y1="{10+i*20+y_offset}" y2="{10+i*20+y_offset}"/>'
-            svgstr +=f'<text x="35" y="{10+i*20 + y_offset}" font-family="Arial, Helvetica, sans-serif" dominant-baseline="central">{label}</text>'
-
-        svgstr += "</svg>"
-        return svgstr, width+2, height+2
-    
     def _repr_svg_(self):
         '''Returns an SVG string of the tree'''
         tree = self.root.subtree_svg(root_labels=self.root.labels)
-        legend = self._legend_svg()
+        legend = _legend_svg(self.root.labels, self.target)
         # Since we will translate the legend by 10 in y, we translate it all the way to the side if it gets higher that 110
         if legend[2] >= 110:
             width = tree[1] + legend[1]

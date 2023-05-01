@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lumber"
+authors = [
+    {name = "Fredrik Konrad", email = "lumber@librico.mozmail.com"}
+]
+description = "Visual & Jupyter-Ready Decision Tree Library"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "GPL-3.0-or-later"}
+dynamic = ["version"]
+
+[tool.setuptools.packages.find]
+include = ["lumber"]
