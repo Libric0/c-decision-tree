@@ -16,6 +16,11 @@ An intuitive, categorial decision tree library for python users, made primarily 
 ### Soft Dependencies
 - `seaborn >= 0.11.2`, only needed to access seaborn's color palettes
 
+## Installation
+```bash
+pip install -i https://test.pypi.org/simple/ lumber
+```
+
 # Usage Example
 
 In this example, we are going to generate a decisiontree that classifies all dishes in the following dataframe `df` into the categories Vegan, Vegetarian, and Meat-Based.

@@ -15,3 +15,6 @@ dynamic = ["version"]
 
 [tool.setuptools.packages.find]
 include = ["lumber"]
+
+[tool.setuptools.dynamic]
+version = {attr = "lumber.__version__"}
